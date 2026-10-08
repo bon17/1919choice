@@ -19,14 +19,28 @@ with sync_playwright() as p:
  assert '선거에 참여할 권리가 없습니다' in page.locator('.scene-background').inner_text()
  assert '전쟁터로 떠난 사람들을 대신해' in page.locator('blockquote').inner_text()
  assert '나라의 대표를 뽑는 데 참여할 수 없어요' in page.locator('blockquote').inner_text()
+ assert page.locator('[data-action=report]').is_disabled()
  page.click('[data-question=work]')
+ assert page.locator('[data-action=report]').is_disabled()
+ assert '1/3' in page.locator('#interview-progress').inner_text()
+ page.locator('[data-action=report]').evaluate("el => el.dispatchEvent(new MouseEvent('click', {bubbles: true}))")
+ assert page.locator('input[name=demand]').count()==0
+ page.click('[data-question=work]')
+ assert page.locator('.note').count()==1
  page.screenshot(path=str(artifact_dir/'background.png'),full_page=True)
+ page.click('[data-question=vote]')
+ assert page.locator('[data-action=report]').is_disabled()
+ page.reload()
+ assert page.locator('.note').count()==2
+ assert page.locator('[data-action=report]').is_disabled()
+ page.click('[data-question=priority]')
+ assert page.locator('[data-action=report]').is_enabled()
+ assert page.locator('input[name=demand]').count()==0
  page.click('[data-action=report]')
+ assert '더 바라는 변화' in page.locator('.task').inner_text()
  page.click('[data-action=submit]')
  assert '함께 골라' in page.locator('#feedback').inner_text()
  page.click('[data-action=interview]')
- page.click('[data-question=vote]')
- page.click('[data-question=priority]')
  page.reload()
  assert page.locator('.note').count()==3
  page.click('[data-action=report]')
@@ -66,6 +80,7 @@ with sync_playwright() as p:
  blocked.click('[data-action=start]')
  blocked.click('[data-question=vote]')
  assert blocked.locator('.note').count()==1
+ assert blocked.locator('[data-action=report]').is_disabled()
  blocked.close()
  assert not errors,errors
  print('PASS: interview, hints, evidence mismatch, completion, persistence, map, reset, mobile overflow; no browser errors')

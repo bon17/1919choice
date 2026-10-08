@@ -2,3 +2,5 @@
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 
 .scene-background{background:#efefe5;border-left:3px solid #a6b39b;padding:18px 20px;margin-top:24px}.scene-background h3{font-size:13px;color:var(--green);margin:0 0 10px}.scene-background p{font-size:13px;line-height:1.9;margin-bottom:9px}.scene-background p:last-child{margin-bottom:0}.context-question{color:var(--green);font-weight:600}.feedback.conversation{background:#e5eadd;border-left-color:var(--green)}.feedback-speaker{display:block;font-size:10px;letter-spacing:1px;margin-bottom:8px;color:var(--green)}.response-note{display:block;font-size:11px;color:var(--muted);margin-top:12px}.confirmation{font-size:16px;min-height:0;padding:15px 0;margin:15px 0}
+
+.primary:disabled{background:#dedfd4;color:#686f66;cursor:not-allowed}.primary:disabled:hover{background:#dedfd4}.questions+.panel-bottom{align-items:flex-start}.questions+.panel-bottom>.primary{max-width:100%;flex-shrink:0}.questions+.panel-bottom>.small{max-width:210px}@media(max-width:900px){.questions+.panel-bottom{flex-wrap:wrap}.questions+.panel-bottom>.small{max-width:none}}
