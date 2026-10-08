@@ -9,8 +9,9 @@ html = (root / 'shell.html').read_text()
 css = (root / 'style.css').read_text()
 game = (root / 'game.js').read_text().replace('export ', '')
 app = (root / 'app.js').read_text().split('\n', 1)[1]
-artwork = 'data:image/webp;base64,' + base64.b64encode((root / 'assets/woman-worker.webp').read_bytes()).decode()
-app = app.replace('assets/woman-worker.webp', artwork)
+for asset in sorted((root / 'assets').glob('*.webp')):
+    artwork = 'data:image/webp;base64,' + base64.b64encode(asset.read_bytes()).decode()
+    app = app.replace(asset.relative_to(root).as_posix(), artwork)
 html = re.sub(r'<link rel="stylesheet" href="style\.css(?:\?[^\"]*)?">', lambda _: '<style>' + css + '</style>', html)
 html = re.sub(r'<script type="module" src="app\.js(?:\?[^\"]*)?"></script>', lambda _: '<script type="module">' + game + '\n' + app + '</script>', html)
 release = hashlib.sha256(html.encode()).hexdigest()[:12]
