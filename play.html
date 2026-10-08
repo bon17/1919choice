@@ -5,7 +5,7 @@
 .scene-background{background:#efefe5;border-left:3px solid #a6b39b;padding:18px 20px;margin-top:24px}.scene-background h3{font-size:13px;color:var(--green);margin:0 0 10px}.scene-background p{font-size:13px;line-height:1.9;margin-bottom:9px}.scene-background p:last-child{margin-bottom:0}.context-question{color:var(--green);font-weight:600}.feedback.conversation{background:#e5eadd;border-left-color:var(--green)}.feedback-speaker{display:block;font-size:10px;letter-spacing:1px;margin-bottom:8px;color:var(--green)}.response-note{display:block;font-size:11px;color:var(--muted);margin-top:12px}.confirmation{font-size:16px;min-height:0;padding:15px 0;margin:15px 0}
 
 .primary:disabled{background:#dedfd4;color:#686f66;cursor:not-allowed}.primary:disabled:hover{background:#dedfd4}.questions+.panel-bottom{align-items:flex-start}.questions+.panel-bottom>.primary{max-width:100%;flex-shrink:0}.questions+.panel-bottom>.small{max-width:210px}@media(max-width:900px){.questions+.panel-bottom{flex-wrap:wrap}.questions+.panel-bottom>.small{max-width:none}}
-</style><meta name="game-release" content="1a65083ba1b4"></head><body><div id="app"></div><script type="module">const questions = [
+</style><meta name="game-release" content="869c3c98bcaa"></head><body><div id="app"></div><script type="module">const questions = [
  {id:'work',label:'일터에서 어떤 어려움이 있나요?',topic:'일터와 생활',answer:'전쟁이 끝난 뒤에도 이 공장에서 계속 일할 수 있을지 걱정돼요. 일자리를 잃으면 생활비를 마련하기 어려워질 테니까요.'},
  {id:'vote',label:'나라의 결정에 의견을 낼 수 있나요?',topic:'정치적 권리',answer:'나라를 위해 일했지만 대표를 뽑을 권리는 없어요. 우리 삶에 영향을 주는 결정인데, 제 목소리는 빠져 있죠.'},
  {id:'priority',label:'가장 먼저 바꾸고 싶은 것은 무엇인가요?',topic:'가장 중요한 변화',answer:'일자리도 중요해요. 하지만 가장 먼저, 우리 삶을 결정하는 정치에 여성도 참여할 수 있었으면 좋겠어요.'}
@@ -41,7 +41,7 @@ function render(focus){
  app.innerHTML=`<header class="mast"><a href="#" data-action="home" class="brand">1919<span>목소리 조사단</span></a><div class="header-right"><span class="edition">첫 번째 목소리 · 체험판</span><button class="quiet" data-action="map">변화 지도 <span class="count">${state.completed?'1':'0'}/1</span></button></div></header>
  ${notice?`<p class="storage" role="status">${notice}</p>`:''}
  ${state.screen==='intro'?intro():play()}
- <footer><span>역사를 읽는 다른 방법, 사람들의 목소리에서 시작합니다.</span><button class="quiet" data-action="reset">처음부터</button></footer>
+ <footer><span>@BONSSAM 보은쌤과 함께하는 역사 수업</span><button class="quiet" data-action="reset">처음부터</button></footer>
  ${mapOpen?map():''}${resetOpen?reset():''}`;
  bind();if(focus)document.querySelector(focus)?.focus();
 }

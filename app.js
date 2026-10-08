@@ -7,7 +7,7 @@ function render(focus){
  app.innerHTML=`<header class="mast"><a href="#" data-action="home" class="brand">1919<span>목소리 조사단</span></a><div class="header-right"><span class="edition">첫 번째 목소리 · 체험판</span><button class="quiet" data-action="map">변화 지도 <span class="count">${state.completed?'1':'0'}/1</span></button></div></header>
  ${notice?`<p class="storage" role="status">${notice}</p>`:''}
  ${state.screen==='intro'?intro():play()}
- <footer><span>역사를 읽는 다른 방법, 사람들의 목소리에서 시작합니다.</span><button class="quiet" data-action="reset">처음부터</button></footer>
+ <footer><span>@BONSSAM 보은쌤과 함께하는 역사 수업</span><button class="quiet" data-action="reset">처음부터</button></footer>
  ${mapOpen?map():''}${resetOpen?reset():''}`;
  bind();if(focus)document.querySelector(focus)?.focus();
 }
