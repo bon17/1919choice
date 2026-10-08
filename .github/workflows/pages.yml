@@ -35,3 +35,19 @@ jobs:
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify live game files
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          for file in index.html app.js game.js style.css; do
+            curl --fail --silent --show-error --retry 12 --retry-all-errors --retry-delay 5 "${SITE_URL}${file}?revision=${GITHUB_SHA}" -o "/tmp/${file}"
+          done
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          assert '목소리 조사단' in Path('/tmp/index.html').read_text()
+          assert 'function interview()' in Path('/tmp/app.js').read_text()
+          assert 'export function evaluate' in Path('/tmp/game.js').read_text()
+          assert '--paper:' in Path('/tmp/style.css').read_text()
+          print('PASS: live HTML, game logic, interface and styles served successfully')
+          PYTHON
+          echo "Live game files verified: ${SITE_URL}" >> "$GITHUB_STEP_SUMMARY"
