@@ -16,9 +16,11 @@ export function restore(raw) {
  }catch{return initialState();}
 }
 export function evaluate(s) {
- if(!s.heard.includes('vote')||!s.heard.includes('priority'))return {ok:false,title:'아직 더 들어볼 이야기가 있어요',text:'정치에 의견을 낼 수 있는지, 가장 먼저 바꾸고 싶은 것은 무엇인지 물어보세요.'};
- if(!s.demand||!s.evidence)return {ok:false,title:'요구와 근거를 함께 골라주세요',text:'어떤 변화를 원하는지 고르고, 그 판단을 뒷받침하는 발언도 선택해 주세요.'};
- if(s.demand!=='vote')return {ok:false,title:'중요한 문제예요. 하지만 우선순위를 다시 보세요.',text:'일자리와 생활도 실제 걱정이에요. 이번 기록에는 이 사람이 가장 먼저 바꾸고 싶다고 말한 요구를 담아주세요.'};
- if(!['vote','priority'].includes(s.evidence))return {ok:false,title:'요구와 근거가 서로 다른 이야기를 하고 있어요',text:'일터의 불안은 고른 정치적 요구의 직접적인 근거가 아니에요. 대표를 뽑을 권리나 정치 참여를 말한 발언을 찾아보세요.'};
- return {ok:true,title:'그 목소리를 잘 담았어요.',text:'여성이 대표를 뽑고 정치에 참여할 권리. 여성 참정권 요구는 정치 참여 확대, 그리고 민주주의의 확산과 연결됩니다.'};
+ if(!s.heard.length)return {ok:false,kind:'guidance',title:'먼저 이야기를 나눠보세요',text:'궁금한 질문을 고르면 이 사람이 자신의 생각을 들려줍니다. 들은 말에서 판단의 근거를 찾아보세요.'};
+ if(!s.demand||!s.evidence)return {ok:false,kind:'guidance',title:'어떤 요구로 들렸나요?',text:'이 사람이 바라는 변화와, 그렇게 생각한 이유가 된 발언을 함께 골라주세요.'};
+ if(!s.heard.includes(s.evidence))return {ok:false,kind:'guidance',title:'그 이야기를 직접 들어볼까요?',text:'인터뷰에서 들은 발언을 근거로 골라주세요.'};
+ if(s.demand==='jobs')return {ok:false,kind:'conversation',title:'일자리를 계속 갖고 싶은 마음도 있어요.',text:'제 걱정을 알아주셨네요. 그런데 저는 그것보다, 우리 삶을 결정하는 정치에 제 의견을 낼 수 있는 권리를 더 원해요. 일자리 문제를 결정할 때도 제 목소리가 함께 들렸으면 좋겠어요.'};
+ if(s.demand==='support')return {ok:false,kind:'conversation',title:'생활을 도와주는 것도 제게 중요해요.',text:'생활이 어려워질까 걱정되니까요. 하지만 저는 도움을 받는 것과 함께, 우리 삶에 관한 결정에 직접 참여하고 싶어요. 대표를 뽑는 데 저도 한 표를 낼 수 있으면 좋겠어요.'};
+ if(!['vote','priority'].includes(s.evidence))return {ok:false,kind:'conversation',title:'그 말도 제 걱정을 담고 있어요.',text:'일자리를 잃을까 걱정된다는 이야기였죠. 제가 정치에 참여하고 싶은 이유를 설명한 말도 있었어요. 그 이야기를 함께 살펴봐 주시겠어요?'};
+ return {ok:true,kind:'confirmed',title:'네, 제가 가장 바라는 변화예요.',text:'일자리와 생활도 중요하지만, 저는 정치에 제 목소리를 낼 권리를 더 원해요.'};
 }

@@ -1,18 +1,21 @@
 from pathlib import Path
+import os
 from playwright.sync_api import sync_playwright
 Path("/tmp/1919-checks").mkdir(exist_ok=True)
+base_url=os.environ.get("TEST_BASE_URL", "http://127.0.0.1:5173")
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  page=browser.new_page(viewport={'width':1440,'height':1000})
  errors=[]
  page.on('pageerror',lambda err:errors.append(str(err)))
- page.goto('http://127.0.0.1:5173')
+ page.goto(base_url)
  page.screenshot(path='/tmp/1919-checks/intro.png',full_page=True)
  page.click('[data-action=start]')
+ assert '선거에 참여할 권리가 없습니다' in page.locator('.scene-background').inner_text()
  page.click('[data-question=work]')
  page.click('[data-action=report]')
  page.click('[data-action=submit]')
- assert '더 들어볼' in page.locator('#feedback').inner_text()
+ assert '함께 골라' in page.locator('#feedback').inner_text()
  page.click('[data-action=interview]')
  page.click('[data-question=vote]')
  page.click('[data-question=priority]')
@@ -22,10 +25,11 @@ with sync_playwright() as p:
  page.check('input[name=demand][value=jobs]')
  page.check('input[name=evidence][value=work]')
  page.click('[data-action=submit]')
- assert '우선순위' in page.locator('#feedback').inner_text()
+ assert '여성 노동자의 답변' in page.locator('#feedback').inner_text()
+ assert '제 걱정을 알아주셨네요' in page.locator('#feedback').inner_text()
  page.check('input[name=demand][value=vote]')
  page.click('[data-action=submit]')
- assert '서로 다른' in page.locator('#feedback').inner_text()
+ assert '그 말도 제 걱정을 담고 있어요' in page.locator('#feedback').inner_text()
  page.screenshot(path='/tmp/1919-checks/report.png',full_page=True)
  page.check('input[name=evidence][value=vote]')
  page.click('[data-action=submit]')
@@ -47,7 +51,7 @@ with sync_playwright() as p:
  assert page.locator('.intro').count()==1
  blocked=browser.new_page()
  blocked.add_init_script("Object.defineProperty(window, 'localStorage', {get(){throw new Error('blocked')}})")
- blocked.goto('http://127.0.0.1:5173')
+ blocked.goto(base_url)
  assert '저장할 수 없어요' in blocked.locator('.storage').inner_text()
  blocked.click('[data-action=start]')
  blocked.click('[data-question=vote]')
