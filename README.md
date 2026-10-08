@@ -28,8 +28,10 @@ npm test
 
 ## 서버 없이 바로 체험
 
-`play.html` 파일을 내려받아 브라우저에서 열면 됩니다. CSS와 JavaScript가 포함되어 외부 파일이나 서버가 필요하지 않습니다. 재생성은 `python3 scripts/build-standalone.py`로 합니다.
+`play.html` 파일을 내려받아 브라우저에서 열면 됩니다. 배포하는 `index.html`도 CSS와 JavaScript를 포함한 단일 파일이며, 외부 파일을 따로 받지 않습니다. `editions/`에는 내용으로 구분한 고유 버전을 보관하므로 이전 링크는 그 버전을 그대로 보여줍니다. 재생성은 `python3 scripts/build-standalone.py`로 합니다. 화면 틀은 `shell.html`, 실제 콘텐츠와 동작은 `app.js`·`game.js`, 스타일은 `style.css`에서 수정하고 다시 생성합니다.
 
 ## GitHub Pages 배포
 
 GitHub 저장소의 **Settings → Pages → Build and deployment**에서 **Deploy from a branch**, **main**, **/(root)**를 선택하고 저장합니다. 배포가 완료되면 이 화면에 실제 사이트 주소가 표시됩니다. 이 설정은 GitHub 권한이 있는 사용자가 한 번 적용해야 합니다.
+
+배포 검증은 공개 사이트를 실제 Chromium 브라우저로 플레이합니다. 배경 설명과 인물의 답변, 진행 복원까지 확인하고 화면 캡처를 GitHub Actions 결과에 보관합니다.

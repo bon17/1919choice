@@ -23,8 +23,10 @@ jobs:
         run: npm test
       - name: Prepare static site
         run: |
+          python3 scripts/build-standalone.py
           mkdir -p _site
-          cp index.html app.js game.js style.css play.html _site/
+          cp index.html play.html _site/
+          cp -r editions _site/
           touch _site/.nojekyll
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -35,19 +37,47 @@ jobs:
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify live game files
+      - name: Verify exact published HTML
+        id: published
         env:
           SITE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          for file in index.html app.js game.js style.css; do
-            curl --fail --silent --show-error --retry 12 --retry-all-errors --retry-delay 5 "${SITE_URL}${file}?revision=${GITHUB_SHA}" -o "/tmp/${file}"
-          done
           python3 - <<'PYTHON'
           from pathlib import Path
-          assert '목소리 조사단' in Path('/tmp/index.html').read_text()
-          assert 'function interview()' in Path('/tmp/app.js').read_text()
-          assert 'export function evaluate' in Path('/tmp/game.js').read_text()
-          assert '--paper:' in Path('/tmp/style.css').read_text()
-          print('PASS: live HTML, game logic, interface and styles served successfully')
+          import os, re, time, urllib.request
+          expected = Path('index.html').read_bytes()
+          release = re.search(rb'name="game-release" content="([a-f0-9]+)"', expected).group(1).decode()
+          site = os.environ['SITE_URL']
+          for path in ['index.html', f'editions/{release}.html']:
+              for attempt in range(24):
+                  try:
+                      actual = urllib.request.urlopen(f'{site}{path}?revision={os.environ["GITHUB_SHA"]}', timeout=15).read()
+                      assert actual == expected, f'{path} still serves different content'
+                      break
+                  except Exception:
+                      if attempt == 23: raise
+                      time.sleep(5)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'release={release}\n')
+          print(f'::notice::Exact published game verified, release {release}')
           PYTHON
-          echo "Live game files verified: ${SITE_URL}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Install browser validation tools
+        run: |
+          python3 -m pip install playwright==1.62.0
+          python3 -m playwright install --with-deps chromium
+      - name: Play the public site in Chromium
+        env:
+          TEST_BASE_URL: ${{ steps.deployment.outputs.page_url }}?release=${{ steps.published.outputs.release }}
+          EXPECTED_RELEASE: ${{ steps.published.outputs.release }}
+          TEST_ARTIFACT_DIR: test-artifacts
+        run: |
+          python3 tests/browser_smoke.py
+          echo "::notice::Public browser verified: context, personal response, progress restore and reset"
+          echo "Verified game: ${{ steps.deployment.outputs.page_url }}editions/${{ steps.published.outputs.release }}.html" >> "$GITHUB_STEP_SUMMARY"
+      - name: Save browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-game-screenshots
+          path: test-artifacts
+          if-no-files-found: ignore
